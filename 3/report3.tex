@@ -118,13 +118,25 @@ y_pred = gnb.fit(x, y).predict(x)
 
 Среди ядер "polynomial", "radial" и "sigmoid" выберите оптимальное в плане количества ошибок на тестовой выборке. Попробуйте различные значения параметра degree для полиномиального ядра.
 
-\begin{table}
-\begin{tabular}{lllll}
+\begin{figure}[H]
+
+\resizebox{\columnwidth}{!}
+{
+\begin{tabular}{l l l l}
 Номер датасета & Тип ядра & Точность на тренировочной выборке & Точность на тестовой выборке\\
-2 &  &  &  &  \\
- &  &  &  &  \\
- &  &  &  & 
+2 & rbf & 0.98 & 0.96 \\
+ & sigmoid & 0.97 & 0.98  \\
+ & poly (deg = 2) & 0.97 & 0.98 \\
+4 & rbf & 0.97 & 0.95 \\
+ & sigmoid & 0.52 & 0.55 \\
+ & poly (def = 2) & 0.87 & 0.87 \\
+5 & rbf & 0.91 & 0.79 \\
+ & sigmoid & 0.67 & 0.25 \\
+ & poly (def = 2) & 0.63 & 0.21 \\  
 \end{tabular}
-\end{table}
+}
+\caption{Результаты обучения с разными ядрами}
+\label{tbl:kernels}
+\end{figure}
 
 \end{document}
