@@ -114,12 +114,13 @@ y_pred = gnb.fit(x, y).predict(x)
 \label{graph:task_2_train_acc}
 \end{figure}
 
-\subsection{Задание 3}
+\subsection{Задания 3, 4}
 
-Среди ядер "polynomial", "radial" и "sigmoid" выберите оптимальное в плане количества ошибок на тестовой выборке. Попробуйте различные значения параметра degree для полиномиального ядра.
+Среди ядер <<polynomial>>, <<radial>> и <<sigmoid>> выберите оптимальное в плане количества ошибок на тестовой выборке. Попробуйте различные значения параметра degree для полиномиального ядра.
+
+Среди ядер <<polynomial>>, <<radial>> и <<sigmoid>> выберите оптимальное в плане количества ошибок на тестовой выборке.
 
 \begin{figure}[H]
-
 \resizebox{\columnwidth}{!}
 {
 \begin{tabular}{l l l l}
@@ -127,16 +128,52 @@ y_pred = gnb.fit(x, y).predict(x)
 2 & rbf & 0.98 & 0.96 \\
  & sigmoid & 0.97 & 0.98  \\
  & poly (deg = 2) & 0.97 & 0.98 \\
+ & poly (deg = 3) & 0.96 & 0.98 \\
+ & poly (deg = 4) & 0.95 & 0.94 \\
+ & poly (deg = 5) & 0.94 & 0.94 \\
 4 & rbf & 0.97 & 0.95 \\
  & sigmoid & 0.52 & 0.55 \\
- & poly (def = 2) & 0.87 & 0.87 \\
+ & poly (deg = 2) & 0.84 & 0.83 \\
+ & poly (deg = 3) & 0.87 & 0.87 \\
 5 & rbf & 0.91 & 0.79 \\
  & sigmoid & 0.67 & 0.25 \\
- & poly (def = 2) & 0.63 & 0.21 \\  
+ & poly (deg = 2) & 0.91 & 0.88 \\
+ & poly (deg = 3) & 0.63 & 0.21 \\
+ & poly (deg = 4) & 0.79 & 0.8 \\
+ & poly (deg = 5) & 0.57 & 0.49 \\
 \end{tabular}
 }
 \caption{Результаты обучения с разными ядрами}
 \label{tbl:kernels}
+
 \end{figure}
+
+\subsection{Задание 5}
+
+\textbf{Постановка задачи:}
+
+Среди ядер <<polynomial>>, <<radial>> и <<sigmoid>> выберите оптимальное в плане количества ошибок на тестовой выборке. Изменяя значение параметра gamma, продемонстрируйте эффект переобучения, выполните при этом визуализацию разбиения пространства признаков на области.
+
+Для каждого датасета рассмотрим наилучшее ядро, выбранное в предыдущем шаге. Зависимость точности обучения от параметра gamma приведена на рис. \ref{graph:task_2_gamma} - \ref{graph:task_5_gamma}.
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth, keepaspectratio]{task2_gamma.png}
+\caption{Переобучение на датасете 2}
+\label{graph:task_2_gamma}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth, keepaspectratio]{task4_gamma.png}
+\caption{Переобучение на датасете 4}
+\label{graph:task_4_gamma}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth, keepaspectratio]{task5_gamma.png}
+\caption{Переобучение на датасете 5}
+\label{graph:task_5_gamma}
+\end{figure}
+
+
 
 \end{document}

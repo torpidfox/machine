@@ -4,6 +4,7 @@ import numpy as np
 import sklearn.svm as svm
 import matplotlib.pyplot as plt
 from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import accuracy_score
 
 fig = plt.figure(figsize=(16,9))
 ax = fig.add_subplot(111)
@@ -45,6 +46,20 @@ def eps_regression(task_num):
 
 	return clf.cv_results_
 
+def draw_depend(x, y, y2, x_label, y_label, title, legend1, legend2, filename):
+	ax.plot(x, y, label=legend1)
+	ax.plot(x, y2, label=legend2)
+	ax.set_xticks(range(len(x)), x)
+	ax.set_xlabel(x_label)
+	ax.set_ylabel(y_label)
+	ax.set_title(title)
+	ax.legend()
+
+	fig.savefig('{}'.format(filename), dpi=199)
+	fig.show()
+
+
+
 def test_params(task_num, c=1):
 	with open('data/svmdata{}.txt'.format(task_num)) as f:
 		train_df = pd.read_csv(f, sep='\t') 
@@ -52,14 +67,30 @@ def test_params(task_num, c=1):
 	with open('data/svmdata{}test.txt'.format(task_num)) as f:
 		test_df = pd.read_csv(f, sep='\t')
 
-	params = {'kernel': ['rbf', 'sigmoid', 'poly']}
-	gs_train = GridSearchCV(svm.SVC(C=c), params)
-	gs_train.fit(train_df[train_df.columns[:-1]], train_df[train_df.columns[-1]])
+	params = {'gamma' : [1, 10, 100, 1000]}
+	train_score, test_score = list(), list()
+	for g in params['gamma']:
+		clf = svm.SVC(C=c, kernel='rbf', gamma=g)
+		clf.fit(train_df[train_df.columns[:-1]],
+			train_df[train_df.columns[-1]])
 
-	gs_test = GridSearchCV(svm.SVC(C=c), params)
-	gs_test.fit(test_df[train_df.columns[:-1]], test_df[train_df.columns[-1]])
+		pred = clf.predict(test_df[train_df.columns[:-1]])
+		test_score.append(accuracy_score(pred, test_df[train_df.columns[-1]]))
+		pred = clf.predict(train_df[train_df.columns[:-1]])
+		train_score.append(accuracy_score(pred, train_df[train_df.columns[-1]]))
 
-	return gs_train.cv_results_, gs_test.cv_results_
+	draw_depend(params['gamma'],
+		train_score,
+		test_score,
+		'Значение параметра gamma',
+		'Точность обучения',
+		'Влияние параметра gamma на переобучение',
+		'Тренировочная выборка',
+		'Тестовая выборка',
+		'task{}_gamma'.format(task_num)
+		)
+
+	return test_score, train_score
 
 
 def perform_task(task_num,
@@ -73,7 +104,6 @@ def perform_task(task_num,
 		tol=1e-5,
 		C=c,
 		kernel=kernel)
-
 	clf.fit(train_df[train_df.columns[:-1]], train_df[train_df.columns[-1]])
 
 	with open('data/svmdata{}test.txt'.format(task_num)) as f:
