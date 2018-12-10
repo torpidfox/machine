@@ -52,7 +52,7 @@ def eps_regression(task_num):
 
 	train_df[train_df.columns[-1]] = pd.factorize(train_df[train_df.columns[-1]])[0]
 
-	params = {'epsilon' : [0.1, 0.2, 0.5, 1, 10]}
+	params = {'epsilon' : [1e-4, 1e-2, 1e-1, 0.5, 1]}
 
 	clf = GridSearchCV(svm.SVR(), params)
 	clf.fit(train_df[train_df.columns[:-1]], train_df[train_df.columns[-1]])
@@ -61,10 +61,12 @@ def eps_regression(task_num):
 	print(clf.cv_results_['std_train_score'])
 
 	ax.plot(params['epsilon'], clf.cv_results_['std_train_score'])
-	ax.xticks(range(len(params['epsilon'])), params['epsilon'])
-	ax.show()
-
-	return clf.cv_results_
+	ax.set_xticks(range(len(params['epsilon'])), params['epsilon'])
+	ax.set_title('Зависимость средневкадратичной ошибки от параметра эпсилон')
+	ax.set_xlabel('Эпсилон')
+	ax.set_ylabel('Среднеквадратичная ошибка')
+	ax.set_xlim(left=params['epsilon'][0], right=params['epsilon'][-1])
+	fig.savefig('task{}_eps_reg'.format(task_num))
 
 def draw_depend(x, y, y2, x_label, y_label, title, legend1, legend2, filename):
 	ax.plot(x, y, label=legend1)
@@ -160,4 +162,5 @@ def perform_task(task_num,
 
 pp = pprint.PrettyPrinter(indent=4)
 #pp.pprint(perform_task(4, c=1000000000))
-pp.pprint(test_params(2, c=1))
+#pp.pprint(test_params(2, c=1))
+pp.pprint(eps_regression(3))
