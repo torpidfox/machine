@@ -6,19 +6,39 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score
 
-fig = plt.figure(figsize=(16,9))
+fig = plt.figure(1, figsize=(16,9))
 ax = fig.add_subplot(111)
 
 def draw_data(df, marker, label):
 	red = df.loc[df[df.columns[-1]] == 'red']
 	ax.scatter(red[df.columns[0]], red[df.columns[1]], color='r',
 		marker=marker,
-		label=label)
+		label=label,
+		zorder=1)
 
 	green = df.loc[df[df.columns[-1]] == 'green']
 	ax.scatter(green[df.columns[0]], green[df.columns[1]], color='g',
 		marker=marker,
 		label=label)
+
+def draw_svm_space(clf, x_bnd, y_bnd):
+	step = 1e-2
+	x_min, x_max = x_bnd
+	y_min, y_max = y_bnd
+
+	x = np.arange(x_min, x_max, step)
+	y = np.arange(y_min, y_max, step)
+	XX, YY = np.meshgrid(x, y)
+	Z = clf.decision_function(np.c_[XX.ravel(), YY.ravel()])
+
+	Z = Z.reshape(XX.shape)
+
+	ax.pcolormesh(XX, YY, Z > 0, cmap=plt.cm.Pastel1)
+	ax.contour(XX, YY, Z, colors=['k', 'k', 'k'], linestyles=['--', '-', '--'],
+				levels=[-.5, 0, .5])
+
+
+
 
 def draw_svm_res(coef, inter):
 	y_from_coeff = lambda x: -(x * coef[0] + inter) / coef[1]
@@ -78,6 +98,14 @@ def test_params(task_num, c=1):
 		test_score.append(accuracy_score(pred, test_df[train_df.columns[-1]]))
 		pred = clf.predict(train_df[train_df.columns[:-1]])
 		train_score.append(accuracy_score(pred, train_df[train_df.columns[-1]]))
+		
+		draw_svm_space(clf, (-2, 2), (-2, 2))
+		draw_data(train_df, 'o', 'Тренировочные данные')
+		draw_data(test_df, '1', 'Тестовые данные')
+		ax.legend()
+		fig.savefig('task{}_gamma{}_visual'.format(task_num, g))
+		ax.cla()
+    
 
 	draw_depend(params['gamma'],
 		train_score,
@@ -89,6 +117,8 @@ def test_params(task_num, c=1):
 		'Тестовая выборка',
 		'task{}_gamma'.format(task_num)
 		)
+
+
 
 	return test_score, train_score
 
@@ -125,7 +155,7 @@ def perform_task(task_num,
 			clf.n_support_)
 
 		ax.set_title(title)
-		fig.savefig('/media/alisa/9648C53D48C51D3D/dying/4/machine/3/task_{}c{}.png'.format(task_num, c), dpi=199)
+		fig.savefig('task_{}c{}.png'.format(task_num, c), dpi=199)
 		fig.show()
 
 pp = pprint.PrettyPrinter(indent=4)
